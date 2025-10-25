@@ -1,0 +1,7 @@
+# Fusesoc
+build/
+fusesoc.conf
+
+# Python
+.venv/
+__pycache__/
