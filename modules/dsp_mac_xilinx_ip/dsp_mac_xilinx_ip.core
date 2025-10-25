@@ -1,0 +1,47 @@
+CAPI=2:
+
+################################################################################
+# Header
+################################################################################
+name: "rbrglez:dsp-task:dsp-mac-xilinx-ip:0.1.0"
+description: "DSP Multiply and ACumulate using Xilinx DSP Macro"
+
+################################################################################
+# Filesets
+################################################################################
+filesets:
+  tcl_files:
+    files:
+      - "tcl/dsp_mac_xilinx_ip.tcl"
+    file_type: "tclSource"
+
+  tb_files:
+    depend:
+      - "^xbc:utils:testbench_utils:0.2.0"
+      - "^open-logic:open-logic-dev:base:4.0.0"
+    files:
+      - "tb/dsp_mac_xilinx_ip_tb.vhd"
+    file_type: "vhdlSource-2008"
+
+################################################################################
+# Targets
+################################################################################
+targets:
+  default: &default
+    filesets:
+      - "tcl_files"
+
+  project:
+    <<: *default
+    filesets_append:
+      - "tb_files"
+    toplevel:
+      - "dsp_mac_xilinx_ip_tb"
+    default_tool: "vivado"
+    tools:
+      vivado:
+        synth: "none"
+        pnr: "none"
+        source_mgmt_mode: "All"
+        part: "xc7a35ticsg324-1L"
+        jobs: 16
