@@ -1,0 +1,51 @@
+CAPI=2:
+
+################################################################################
+# Header
+################################################################################
+name: "rbrglez:dsp-task:matrix-vector-product:0.1.0"
+description: "Matrix Vector Product"
+
+################################################################################
+# Filesets
+################################################################################
+filesets:
+  rtl_files:
+    depend:
+      - "^open-logic:open-logic-dev:base:4.0.0"
+      - "^rbrglez:dsp-task:extend-pkg-array:0.1.0"
+      - "^rbrglez:dsp-task:dot-product:0.1.0"
+    files:
+      - "rtl/matrix_vector_product.vhd"
+    file_type: "vhdlSource-2008"
+
+  tb_files:
+    depend:
+      - "^xbc:utils:testbench_utils:0.2.0"
+      - "^open-logic:open-logic-dev:base:4.0.0"
+    files:
+      - "tb/matrix_vector_product_tb.vhd"
+    file_type: "vhdlSource-2008"
+
+################################################################################
+# Targets
+################################################################################
+targets:
+  default: &default
+    filesets:
+      - "rtl_files"
+
+  project:
+    <<: *default
+    filesets_append:
+      - "tb_files"
+    toplevel:
+      - "matrix_vector_product"
+    default_tool: "vivado"
+    tools:
+      vivado:
+        synth: "none"
+        pnr: "none"
+        source_mgmt_mode: "All"
+        part: "xc7a35ticsg324-1L"
+        jobs: 16
