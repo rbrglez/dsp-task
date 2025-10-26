@@ -2,8 +2,6 @@
 -- dot_product_tb
 --------------------------------------------------------------------------------
 
-library std;
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -21,14 +19,13 @@ entity dot_product_tb is
         TEST_CASE_G       : string  := "demo";
         DIMENSION_WIDTH_G : natural := 8;
         ELEMENT_WIDTH_G   : natural := 4;
-        PRODUCT_WIDTH_G   : natural := 11
+        RESULT_WIDTH_G    : natural := 11
     );
 end entity dot_product_tb;
 
 architecture tb of dot_product_tb is
 
     constant T_C : time := 10 ns;
-
 
     ----------------------------------------------------------------------------
     -- DUT
@@ -40,7 +37,7 @@ architecture tb of dot_product_tb is
     signal in_vector_a_i     : StlvArray_t(DIMENSION_WIDTH_G - 1 downto 0)(ELEMENT_WIDTH_G - 1 downto 0);
     signal in_vector_b_i     : StlvArray_t(DIMENSION_WIDTH_G - 1 downto 0)(ELEMENT_WIDTH_G - 1 downto 0);
     signal out_valid_o       : std_logic;
-    signal out_dot_product_o : std_logic_vector(PRODUCT_WIDTH_G - 1 downto 0);
+    signal out_dot_product_o : std_logic_vector(RESULT_WIDTH_G - 1 downto 0);
 
 begin
 
@@ -51,7 +48,7 @@ begin
         generic map (
             DIMENSION_WIDTH_G => DIMENSION_WIDTH_G,
             ELEMENT_WIDTH_G   => ELEMENT_WIDTH_G,
-            PRODUCT_WIDTH_G   => PRODUCT_WIDTH_G
+            RESULT_WIDTH_G    => RESULT_WIDTH_G
         )
         port map (
             clk_i => clk_i,
@@ -85,17 +82,17 @@ begin
         rst_i <= '0';
         tb_clk_period(clk_i, 10);
 
-
         log_info("Initialize");
         in_valid_i    <= '0';
-        in_vector_a_i <= (others => (others => '0'));
-        in_vector_b_i <= (others => (others => '0'));
+        in_vector_a_i <= (others => (others => 'X'));
+        in_vector_b_i <= (others => (others => 'X'));
 
         tb_clk_period(clk_i, 10);
 
         if (TEST_CASE_G = "demo") then
             --------------------------------------------------------------------
             log_info("Test Case: demo");
+
             for i in 0 to DIMENSION_WIDTH_G - 1 loop
                 in_vector_a_i(i) <= toUslv(i, ELEMENT_WIDTH_G);
                 in_vector_b_i(i) <= toUslv(DIMENSION_WIDTH_G - i, ELEMENT_WIDTH_G);
@@ -105,9 +102,42 @@ begin
             tb_clk_period(clk_i);
             in_valid_i <= '0';
 
+            in_vector_a_i <= (others => (others => 'X'));
+            in_vector_b_i <= (others => (others => 'X'));
 
-            tb_clk_period(clk_i, 100);
+            tb_clk_period(clk_i, 8);
 
+            --------------------------------------------------------------------
+            for i in 0 to DIMENSION_WIDTH_G - 1 loop
+                in_vector_a_i(i) <= toUslv(1, ELEMENT_WIDTH_G);
+                in_vector_b_i(i) <= toUslv(i, ELEMENT_WIDTH_G);
+            end loop;
+
+            in_valid_i <= '1';
+            tb_clk_period(clk_i);
+            in_valid_i <= '0';
+
+            in_vector_a_i <= (others => (others => 'X'));
+            in_vector_b_i <= (others => (others => 'X'));
+
+            tb_clk_period(clk_i, 8);
+
+            --------------------------------------------------------------------
+            for i in 0 to DIMENSION_WIDTH_G - 1 loop
+                in_vector_a_i(i) <= toUslv(i mod 4, ELEMENT_WIDTH_G);
+                in_vector_b_i(i) <= toUslv(i mod 2, ELEMENT_WIDTH_G);
+            end loop;
+
+            in_valid_i <= '1';
+            tb_clk_period(clk_i);
+            in_valid_i <= '0';
+
+            in_vector_a_i <= (others => (others => 'X'));
+            in_vector_b_i <= (others => (others => 'X'));
+
+            tb_clk_period(clk_i, 8);
+
+            tb_clk_period(clk_i, 10);
 
         end if;
 
