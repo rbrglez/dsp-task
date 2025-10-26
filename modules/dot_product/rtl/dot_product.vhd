@@ -170,11 +170,10 @@ begin
             r <= r_next;
             if (rst_i = '1') then
                 r.feedback_mux_sel <= '0';
-
-                r.in_ready  <= '1';
-                r.out_valid <= '0';
-
-                r.idx <= 0;
+                r.in_ready         <= '1';
+                r.out_valid        <= '0';
+                r.idx              <= 0;
+                r.state            <= IDLE_S;
             end if;
         end if;
     end process;
