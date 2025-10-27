@@ -1,0 +1,46 @@
+CAPI=2:
+
+################################################################################
+# Header
+################################################################################
+name: "rbrglez:dsp-task:evaluate-matrix-vector-product:0.1.0"
+description: "Evaluate Matrix Vector Product"
+
+################################################################################
+# Filesets
+################################################################################
+filesets:
+  rtl_files:
+    depend:
+      - "^open-logic:open-logic-dev:base:4.0.0"
+      - "^rbrglez:dsp-task:reduce:0.1.0"
+      - "^rbrglez:dsp-task:matrix-vector-product:0.1.0"
+    files:
+      - "rtl/evaluate_matrix_vector_product.vhd"
+      - "rtl/matrix_pkg.vhd"
+    file_type: "vhdlSource-2008"
+
+  constraint_files:
+    files:
+      - "constraints/a7_35.xdc"
+    file_type: "xdc"
+
+################################################################################
+# Targets
+################################################################################
+targets:
+  default: &default
+    filesets:
+      - "rtl_files"
+      - "constraint_files"
+
+  project:
+    <<: *default
+    toplevel:
+      - "evaluate_matrix_vector_product"
+    default_tool: "vivado"
+    tools:
+      vivado:
+        source_mgmt_mode: "All"
+        part: "xc7a35ticsg324-1L"
+        jobs: 16
