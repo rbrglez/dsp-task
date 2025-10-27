@@ -19,6 +19,10 @@ entity dsp_mac is
 end entity dsp_mac;
 
 architecture rtl of dsp_mac is
+
+    attribute use_dsp : string;
+    attribute use_dsp of p_o : signal is "yes";
+
 begin
     process(clk_i)
     begin
