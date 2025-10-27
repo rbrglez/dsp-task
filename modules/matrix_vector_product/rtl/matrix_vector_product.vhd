@@ -179,7 +179,6 @@ begin
                         v.stage_idx := 0;
 
                         v.state := IDLE_S;
-                        v.state := IDLE_S;
                     end if;
                 end if;
 
