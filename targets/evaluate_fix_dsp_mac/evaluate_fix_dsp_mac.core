@@ -1,0 +1,45 @@
+CAPI=2:
+
+################################################################################
+# Header
+################################################################################
+name: "rbrglez:dsp-task:evaluate-fix-dsp-mac:0.1.0"
+description: "Evaluate Fixed Point Multiply and ACcumulate DSP"
+
+################################################################################
+# Filesets
+################################################################################
+filesets:
+  rtl_files:
+    depend:
+      - "^open-logic:open-logic-dev:base:4.0.0"
+      - "^rbrglez:dsp-task:reduce:0.1.0"
+      - "^rbrglez:dsp-task:fix-dsp-mac:0.1.0"
+    files:
+      - "rtl/evaluate_fix_dsp_mac.vhd"
+    file_type: "vhdlSource-2008"
+
+  constraint_files:
+    files:
+      - "constraints/a7_35.xdc"
+    file_type: "xdc"
+
+################################################################################
+# Targets
+################################################################################
+targets:
+  default: &default
+    filesets:
+      - "rtl_files"
+      - "constraint_files"
+
+  project:
+    <<: *default
+    toplevel:
+      - "evaluate_fix_dsp_mac"
+    default_tool: "vivado"
+    tools:
+      vivado:
+        source_mgmt_mode: "All"
+        part: "xc7a35ticsg324-1L"
+        jobs: 16
