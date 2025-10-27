@@ -5,6 +5,7 @@
 
 FUSESOC_LIBRARIES := \
 	submodules/open-logic/src \
+	submodules/open-logic/3rdParty/en_cl_fix \
 	submodules/xbc-testbench-utils \
 	modules \
 	targets

@@ -1,0 +1,50 @@
+CAPI=2:
+
+################################################################################
+# Header
+################################################################################
+name: "rbrglez:dsp-task:fix-dsp-mac:0.1.0"
+description: "Fixed Point DSP Multiply and ACcumulate"
+
+################################################################################
+# Filesets
+################################################################################
+filesets:
+  rtl_files:
+    depend:
+      - "^open-logic:open-logic-dev:base:4.0.0"
+      - "^open-logic:open-logic-dev:fix:4.0.0"
+    files:
+      - "rtl/fix_dsp_mac.vhd"
+    file_type: "vhdlSource-2008"
+
+  tb_files:
+    depend:
+      - "^xbc:utils:testbench_utils:0.2.0"
+      - "^open-logic:open-logic-dev:base:4.0.0"
+    files:
+      - "tb/fix_dsp_mac_tb.vhd"
+    file_type: "vhdlSource-2008"
+
+################################################################################
+# Targets
+################################################################################
+targets:
+  default: &default
+    filesets:
+      - "rtl_files"
+
+  project:
+    <<: *default
+    filesets_append:
+      - "tb_files"
+    toplevel:
+      - "fix_dsp_mac"
+    default_tool: "vivado"
+    tools:
+      vivado:
+        synth: "none"
+        pnr: "none"
+        source_mgmt_mode: "All"
+        part: "xc7a35ticsg324-1L"
+        jobs: 16
