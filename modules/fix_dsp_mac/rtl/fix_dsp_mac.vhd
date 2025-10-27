@@ -14,9 +14,6 @@ library olo;
 use olo.en_cl_fix_pkg.all;
 use olo.olo_fix_pkg.all;
 
--- library work;
--- use work.fix_dsp_mac_formats_pkg.all;
-
 --------------------------------------------------------------------------------
 -- Entitity
 --------------------------------------------------------------------------------
