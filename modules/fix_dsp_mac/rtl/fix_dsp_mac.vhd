@@ -19,16 +19,16 @@ use olo.olo_fix_pkg.all;
 --------------------------------------------------------------------------------
 entity fix_dsp_mac is
     generic(
-        FMT_MULT_A_G      : string := "(0, 2, 2)";
-        FMT_MULT_B_G      : string := "(0, 2, 2)";
-        FMT_ADD_G         : string := "(0, 4, 4)";
-        FMT_RESULT_G      : string := "(0, 5, 4)"
+        FMT_MULT_A_G : string := "(0, 2, 2)";
+        FMT_MULT_B_G : string := "(0, 2, 2)";
+        FMT_ADD_G    : string := "(0, 4, 4)";
+        FMT_RESULT_G : string := "(0, 5, 4)"
     );
     port (
-        clk_i    : in std_logic;
-        rst_i    : in std_logic;
-        mult_a_i : in std_logic_vector(fixFmtWidthFromString(FMT_MULT_A_G) - 1 downto 0);
-        mult_b_i : in std_logic_vector(fixFmtWidthFromString(FMT_MULT_B_G) - 1 downto 0);
+        clk_i    : in  std_logic;
+        rst_i    : in  std_logic;
+        mult_a_i : in  std_logic_vector(fixFmtWidthFromString(FMT_MULT_A_G) - 1 downto 0);
+        mult_b_i : in  std_logic_vector(fixFmtWidthFromString(FMT_MULT_B_G) - 1 downto 0);
         add_i    : in  std_logic_vector(fixFmtWidthFromString(FMT_ADD_G) - 1 downto 0);
         result_o : out std_logic_vector(fixFmtWidthFromString(FMT_RESULT_G) - 1 downto 0)
     );
@@ -36,16 +36,12 @@ end entity fix_dsp_mac;
 
 architecture rtl of fix_dsp_mac is
 
-    -- attribute use_dsp : string;
-    -- attribute use_dsp of p_o : signal is "yes";
-
-    constant FMT_MULT_A_C      : FixFormat_t := (0, 2, 2);
-    constant FMT_MULT_B_C      : FixFormat_t := (0, 2, 2);
-    constant FMT_ADD_C         : FixFormat_t := (0, 4, 4);
-    constant FMT_MULT_RESULT_C : FixFormat_t := cl_fix_mult_fmt(FMT_MULT_A_C, FMT_MULT_B_C);
-    constant FMT_MAC_RESULT_C  : FixFormat_t := cl_fix_add_fmt(FMT_ADD_C, FMT_MULT_RESULT_C);
-
     signal mult_result : std_logic_vector(fixFmtWidthFromString(FMT_ADD_G) - 1 downto 0);
+
+    attribute use_dsp                : string;
+    attribute use_dsp of mult_result : signal is "yes";
+    attribute use_dsp of result_o    : signal is "yes";
+
 begin
 
     u_olo_fix_mult : entity olo.olo_fix_mult
