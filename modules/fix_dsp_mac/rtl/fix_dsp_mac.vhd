@@ -49,10 +49,6 @@ architecture rtl of fix_dsp_mac is
     signal mult_valid  : std_logic;
     signal mult_result : std_logic_vector(fixFmtWidthFromString(FMT_ADD_G) - 1 downto 0);
 
-    -- attribute use_dsp                : string;
-    -- attribute use_dsp of mult_result : signal is "yes";
-    -- attribute use_dsp of out_result_o    : signal is "yes";
-
 begin
 
     u_olo_fix_mult : entity olo.olo_fix_mult
