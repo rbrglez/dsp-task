@@ -34,56 +34,55 @@ def cosim(output_path : str = None,
     print(f"FMT_RESULT_G:    {FMT_RESULT_G}");
     print(f"FMT_MULT_RESULT: {FMT_MULT_RESULT}");
     
-
     Round = FixRound.Trunc_s
     Saturate = FixSaturate.Warn_s
 
     #Calculation
     np.random.seed(42)  # Set the seed for reproducibility
-    mult_a_i = np.linspace(cl_fix_min_value(FMT_MULT_A_G), cl_fix_max_value(FMT_MULT_A_G), 100)
-    mult_a_i = np.concatenate([
+    in_mult_a_i = np.linspace(cl_fix_min_value(FMT_MULT_A_G), cl_fix_max_value(FMT_MULT_A_G), 100)
+    in_mult_a_i = np.concatenate([
         np.linspace(cl_fix_min_value(FMT_MULT_A_G), cl_fix_max_value(FMT_MULT_A_G), 100, endpoint=False),
         np.random.uniform(low=cl_fix_min_value(FMT_MULT_A_G), high=cl_fix_max_value(FMT_MULT_A_G), size = 100)
     ])
-    mult_a_i = cl_fix_from_real(mult_a_i, FMT_MULT_A_G)
+    in_mult_a_i = cl_fix_from_real(in_mult_a_i, FMT_MULT_A_G)
 
-    mult_b_i = np.concatenate([
+    in_mult_b_i = np.concatenate([
         np.linspace(cl_fix_min_value(FMT_MULT_B_G), cl_fix_max_value(FMT_MULT_B_G), 50, endpoint=False),
         np.linspace(cl_fix_max_value(FMT_MULT_B_G), cl_fix_min_value(FMT_MULT_B_G), 50),
         np.random.uniform(low=cl_fix_min_value(FMT_MULT_B_G), high=cl_fix_max_value(FMT_MULT_B_G), size = 100)
     ])
-    mult_b_i = cl_fix_from_real(mult_b_i, FMT_MULT_B_G)
+    in_mult_b_i = cl_fix_from_real(in_mult_b_i, FMT_MULT_B_G)
 
-    add_i = np.concatenate([
+    in_add_i = np.concatenate([
         np.linspace(cl_fix_min_value(FMT_MULT_RESULT), cl_fix_max_value(FMT_ADD_G), 50, endpoint=False),
         np.linspace(cl_fix_max_value(FMT_ADD_G), cl_fix_min_value(FMT_MULT_RESULT), 50),
         np.random.uniform(low=cl_fix_min_value(FMT_ADD_G), high=cl_fix_max_value(FMT_MULT_RESULT), size = 100)
     ])
 
-    add_i = cl_fix_from_real(add_i, FMT_ADD_G)
+    in_add_i = cl_fix_from_real(in_add_i, FMT_ADD_G)
 
     MultClass = olo_fix_mult(FMT_MULT_A_G, FMT_MULT_B_G, FMT_MULT_RESULT, Round, Saturate)
-    mult_result = MultClass.process(mult_a_i, mult_b_i)
+    mult_result = MultClass.process(in_mult_a_i, in_mult_b_i)
 
     AddClass = olo_fix_add(FMT_MULT_RESULT, FMT_ADD_G, FMT_RESULT_G, Round, Saturate)
-    result_o = AddClass.process(mult_result, add_i)
+    out_result_o = AddClass.process(mult_result, in_add_i)
 
     # Plot if enabled
     if not cosim_mode:
-        py_out = mult_a_i * mult_b_i + add_i
+        py_out = in_mult_a_i * in_mult_b_i + in_add_i
         olo_fix_plots.plot_subplots({
-                                    "Multiplication Stage" : {"mult_a_i" : mult_a_i, "mult_b_i" : mult_b_i},
-                                    "Addition Stage" : {"mult_result" : mult_result, "add_i" : add_i},
-                                    "Python vs. Fix" : {"Fix" : result_o, "Python" : py_out}
+                                    "Multiplication Stage" : {"in_mult_a_i" : in_mult_a_i, "in_mult_b_i" : in_mult_b_i},
+                                    "Addition Stage" : {"mult_result" : mult_result, "in_add_i" : in_add_i},
+                                    "Python vs. Fix" : {"Fix" : out_result_o, "Python" : py_out}
         })
 
     #Write Files
     if cosim_mode:
         writer = olo_fix_cosim(output_path)
-        writer.write_cosim_file(mult_a_i, FMT_MULT_A_G, "mult_a_i.fix")
-        writer.write_cosim_file(mult_b_i, FMT_MULT_B_G, "mult_b_i.fix")
-        writer.write_cosim_file(add_i, FMT_ADD_G, "add_i.fix")
-        writer.write_cosim_file(result_o, FMT_RESULT_G, "result_o.fix")
+        writer.write_cosim_file(in_mult_a_i, FMT_MULT_A_G, "in_mult_a_i.fix")
+        writer.write_cosim_file(in_mult_b_i, FMT_MULT_B_G, "in_mult_b_i.fix")
+        writer.write_cosim_file(in_add_i, FMT_ADD_G, "in_add_i.fix")
+        writer.write_cosim_file(out_result_o, FMT_RESULT_G, "out_result_o.fix")
     return True
 
 if __name__ == "__main__":

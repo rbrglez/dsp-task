@@ -42,10 +42,10 @@ architecture rtl of evaluate_fix_dsp_mac is
 
     signal rst_125 : std_logic;
 
-    signal mult_a : std_logic_vector(fixFmtWidthFromString(FMT_MULT_A_G) - 1 downto 0);
-    signal mult_b : std_logic_vector(fixFmtWidthFromString(FMT_MULT_B_G) - 1 downto 0);
-    signal add    : std_logic_vector(fixFmtWidthFromString(FMT_ADD_G) - 1 downto 0);
-    signal result : std_logic_vector(fixFmtWidthFromString(FMT_RESULT_G) - 1 downto 0);
+    signal in_mult_a : std_logic_vector(fixFmtWidthFromString(FMT_MULT_A_G) - 1 downto 0);
+    signal in_mult_b : std_logic_vector(fixFmtWidthFromString(FMT_MULT_B_G) - 1 downto 0);
+    signal in_add    : std_logic_vector(fixFmtWidthFromString(FMT_ADD_G) - 1 downto 0);
+    signal out_result : std_logic_vector(fixFmtWidthFromString(FMT_RESULT_G) - 1 downto 0);
 
 begin
 
@@ -62,10 +62,12 @@ begin
         port map (
             clk_i    => clk_125_i,
             rst_i    => rst_125,
-            mult_a_i => mult_a,
-            mult_b_i => mult_b,
-            add_i    => add,
-            result_o => result
+
+            in_mult_a_i => in_mult_a,
+            in_mult_b_i => in_mult_b,
+            in_add_i    => in_add,
+
+            out_result_o => out_result
         );
 
     ----------------------------------------------------------------------------
@@ -83,46 +85,46 @@ begin
 
     u_in_reduce_mult_a : entity work.in_reduce
         generic map (
-            Size_g => mult_a'length
+            Size_g => in_mult_a'length
         )
         port map (
             Clk      => clk_125_i,
             Data     => in_reduce_mult_a_data_i,
             Latch    => in_reduce_mult_a_latch_i,
-            DutPorts => mult_a
+            DutPorts => in_mult_a
         );
 
     u_in_reduce_mult_b : entity work.in_reduce
         generic map (
-            Size_g => mult_b'length
+            Size_g => in_mult_b'length
         )
         port map (
             Clk      => clk_125_i,
             Data     => in_reduce_mult_b_data_i,
             Latch    => in_reduce_mult_b_latch_i,
-            DutPorts => mult_b
+            DutPorts => in_mult_b
         );
 
     u_in_reduce_add : entity work.in_reduce
         generic map (
-            Size_g => add'length
+            Size_g => in_add'length
         )
         port map (
             Clk      => clk_125_i,
             Data     => in_reduce_add_data_i,
             Latch    => in_reduce_add_latch_i,
-            DutPorts => add
+            DutPorts => in_add
         );
 
     u_out_reduce_result : entity work.out_reduce
         generic map (
-            Size_g => result'length
+            Size_g => out_result'length
         )
         port map (
             Clk      => clk_125_i,
             Data     => out_reduce_result_data_o,
             Latch    => out_reduce_result_latch_i,
-            DutPorts => result
+            DutPorts => out_result
         );
 
 end architecture rtl;
