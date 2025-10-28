@@ -50,7 +50,7 @@ begin
             BFmt_g      => FMT_MULT_B_G,
             ResultFmt_g => FMT_ADD_G,
             Round_g     => "NonSymPos_s",
-            Saturate_g  => "Sat_s",
+            Saturate_g  => "Warn_s",
             OpRegs_g    => 0,
             RoundReg_g  => "NO",
             SatReg_g    => "NO"

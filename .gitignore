@@ -5,3 +5,6 @@ fusesoc.conf
 # Python
 .venv/
 __pycache__/
+
+# OLO
+*.fix
