@@ -138,35 +138,23 @@ vu.add_verification_components()
 
 # Create a library
 olo = vu.add_library('olo')
-#olo_tb = vu.add_library('olo_tb')
-#dsp_task = vu.add_library('dsp_task')
-#dsp_task_tb = vu.add_library('dsp_task_tb')
-
 lib = vu.add_library('lib')
 
 # Add all open-logic VHDL files
 files  = glob('../submodules/open-logic/src/**/*.vhd', recursive=True)
 files += glob('../submodules/open-logic/3rdParty/en_cl_fix/hdl/*.vhd', recursive=True)
 olo.add_source_files(files)
-#lib.add_source_files(files)
 
 # Add all source VHDL files
-#files  = glob('../modules/**/rtl/*.vhd', recursive=True)
-files  = glob('../modules/fix_dsp_mac/rtl/*.vhd', recursive=True)
-files += glob('../modules/fix_dot_product/rtl/*.vhd', recursive=True)
-#dsp_task.add_source_files(files)
+files = glob('../modules/**/rtl/*.vhd', recursive=True)
 lib.add_source_files(files)
 
 # Add test helpers
 files = glob('../submodules/open-logic/test/tb/*.vhd', recursive=True)
-#olo_tb.add_source_files(files)
 lib.add_source_files(files)
 
 # Add all vunit tb VHDL files
-#files += glob('../modules/**/vunit_tb/*.vhd', recursive=True)
-files  = glob('../modules/fix_dsp_mac/vunit_tb/*.vhd', recursive=True)
-files += glob('../modules/fix_dot_product/vunit_tb/*.vhd', recursive=True)
-#dsp_task_tb.add_source_files(files)
+files  = glob('../modules/**/vunit_tb/*.vhd', recursive=True)
 lib.add_source_files(files)
 
 # Obviously flags must be set after files are imported
