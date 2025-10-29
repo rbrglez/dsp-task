@@ -64,6 +64,20 @@ def add_configs(lib):
 
     named_config(tb, default_generics, pre_config=cosim)
 
+    ### fix_dot_product ###
+    tb = lib.test_bench('fix_dot_product_vunit_tb')
+    #Test formats and round/sat modes
+    default_generics = {
+        'DIMENSION_WIDTH_G' : 4,
+        'FMT_IN_ELEMENT_A_G': '(0,4,4)',
+        'FMT_IN_ELEMENT_B_G': '(0,4,4)',
+        'FMT_OUT_RESULT_G':   '(0,10,8)',
+    }
+
+    cosim = fix_dot_product.vunit_tb.cosim.cosim
+
+    named_config(tb, default_generics, pre_config=cosim)
+
 ########################################################################################################################
 # Setup
 ########################################################################################################################
@@ -139,6 +153,7 @@ olo.add_source_files(files)
 # Add all source VHDL files
 #files  = glob('../modules/**/rtl/*.vhd', recursive=True)
 files  = glob('../modules/fix_dsp_mac/rtl/*.vhd', recursive=True)
+files += glob('../modules/fix_dot_product/rtl/*.vhd', recursive=True)
 #dsp_task.add_source_files(files)
 lib.add_source_files(files)
 
@@ -149,7 +164,8 @@ lib.add_source_files(files)
 
 # Add all vunit tb VHDL files
 #files += glob('../modules/**/vunit_tb/*.vhd', recursive=True)
-files = glob('../modules/fix_dsp_mac/vunit_tb/*.vhd', recursive=True)
+files  = glob('../modules/fix_dsp_mac/vunit_tb/*.vhd', recursive=True)
+files += glob('../modules/fix_dot_product/vunit_tb/*.vhd', recursive=True)
 #dsp_task_tb.add_source_files(files)
 lib.add_source_files(files)
 

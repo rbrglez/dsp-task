@@ -127,8 +127,8 @@ def cosim(output_path : str = None,
     #Write Files
     if cosim_mode:
         writer = olo_fix_cosim(output_path)
-        writer.write_cosim_file(vector_a, FMT_IN_ELEMENT_A_G, "vector_a.fix")
-        writer.write_cosim_file(vector_b, FMT_IN_ELEMENT_B_G, "vector_b.fix")
+        writer.write_cosim_file(vector_a, FMT_IN_ELEMENT_A_G, "vector_a.fix", dim=DIMENSION_WIDTH_G)
+        writer.write_cosim_file(vector_b, FMT_IN_ELEMENT_B_G, "vector_b.fix", dim=DIMENSION_WIDTH_G)
         writer.write_cosim_file(result, FMT_OUT_RESULT_G, "result.fix")
     return True
 
@@ -141,6 +141,7 @@ if __name__ == "__main__":
         "FMT_OUT_RESULT_G":   "(0, 10, 8)"
     }
     try:
-        cosim(generics=generics, cosim_mode=False)
+        #cosim(generics=generics, cosim_mode=False)
+        cosim(generics=generics, cosim_mode=True, output_path = '.')
     except NotImplementedError as e:
         print(f"Caught: {e}")

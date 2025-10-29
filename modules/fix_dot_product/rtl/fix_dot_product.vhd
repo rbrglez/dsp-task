@@ -61,7 +61,7 @@ architecture rtl of fix_dot_product is
         in_ready         : std_logic;
         out_valid        : std_logic;
         feedback_mux_sel : std_logic;
-        idx              : natural range 0 to DIMENSION_WIDTH_G - 1;
+        idx              : natural range 0 to DIMENSION_WIDTH_G;
         --
         state : state_t;
     end record;
