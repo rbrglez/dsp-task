@@ -25,6 +25,12 @@ def named_config(tb, map : dict, pre_config = None, short_name = None):
         pre_config = partial(pre_config, generics=map)
     tb.add_config(name=cfg_name, generics = map, pre_config=pre_config)
 
+def make_short_name(generics, generic_aliases):
+    parts = []
+    for k, v in generics.items():
+        alias = generic_aliases.get(k, k)  # use alias if defined, else full key
+        parts.append(f"{alias}={v}")
+    return "_".join(parts)
 ################################################################################
 ## test_configs.py
 ################################################################################
@@ -52,12 +58,11 @@ def add_configs(lib):
 
     ### fix_dsp_mac ###
     tb = lib.test_bench('fix_dsp_mac_vunit_tb')
-    #Test formats and round/sat modes
     default_generics = {
-        'FMT_MULT_A_G': '(0,4,4)',
-        'FMT_MULT_B_G': '(0,4,4)',
-        'FMT_ADD_G':    '(0,8,8)',
-        'FMT_RESULT_G': '(0,9,8)',
+        'FMT_MULT_A_G' : '(0,4,4)',
+        'FMT_MULT_B_G' : '(0,4,4)',
+        'FMT_ADD_G'    : '(0,8,8)',
+        'FMT_RESULT_G' : '(0,9,8)',
     }
 
     cosim = fix_dsp_mac.vunit_tb.cosim.cosim
@@ -66,17 +71,60 @@ def add_configs(lib):
 
     ### fix_dot_product ###
     tb = lib.test_bench('fix_dot_product_vunit_tb')
-    #Test formats and round/sat modes
     default_generics = {
         'DIMENSION_WIDTH_G' : 4,
         'FMT_IN_ELEMENT_A_G': '(0,4,4)',
         'FMT_IN_ELEMENT_B_G': '(0,4,4)',
-        'FMT_OUT_RESULT_G':   '(0,10,8)',
+        'FMT_OUT_RESULT_G'  : '(0,10,8)',
     }
 
     cosim = fix_dot_product.vunit_tb.cosim.cosim
 
     named_config(tb, default_generics, pre_config=cosim)
+
+    ### fix_matrix_vector_product ###
+    tb = lib.test_bench('fix_matrix_vector_product_vunit_tb')
+    cosim = fix_matrix_vector_product.vunit_tb.cosim.cosim
+
+    generic_aliases = {
+        'COSIM_NUM_TEST_VECTORS_G' : 'NUM_SAMPLES',
+        'COSIM_MATRIX_TYPE_G'      : 'MATRIX_TYPE',
+        'NUM_DOT_PRODUCTS_G'       : 'DSPs',
+        'MATRIX_ROW_WIDTH_G'       : 'ROWs',
+        'MATRIX_COLUMN_WIDTH_G'    : 'COLs',
+        'FMT_IN_MATRIX_ELEMENT_G'  : 'FMT_MATRIX',
+        'FMT_IN_VECTOR_ELEMENT_G'  : 'FMT_VECTOR',
+        'FMT_OUT_RESULT_G'         : 'FMT_RESULT',
+    }
+
+    default_generics = {
+        'COSIM_NUM_TEST_VECTORS_G' : 16,
+        'COSIM_MATRIX_TYPE_G'      : 'DESCENDING',
+        'NUM_DOT_PRODUCTS_G'       : 11,
+        'MATRIX_ROW_WIDTH_G'       : 32,
+        'MATRIX_COLUMN_WIDTH_G'    : 32,
+        'FMT_IN_MATRIX_ELEMENT_G'  : '(0,8,8)',
+        'FMT_IN_VECTOR_ELEMENT_G'  : '(0,8,8)',
+        'FMT_OUT_RESULT_G'         : '(0,21,16)',
+    }
+
+    short_name = make_short_name(default_generics, generic_aliases)
+    named_config(tb, default_generics, pre_config=cosim, short_name=short_name)
+
+    default_generics = {
+        'COSIM_NUM_TEST_VECTORS_G' : 8,
+        'COSIM_MATRIX_TYPE_G'      : 'ASCENDING',
+        'NUM_DOT_PRODUCTS_G'       : 2,
+        'MATRIX_ROW_WIDTH_G'       : 4,
+        'MATRIX_COLUMN_WIDTH_G'    : 4,
+        'FMT_IN_MATRIX_ELEMENT_G'  : '(0,4,1)',
+        'FMT_IN_VECTOR_ELEMENT_G'  : '(0,4,1)',
+        'FMT_OUT_RESULT_G'         : '(0,10,2)',
+    }
+
+    # Build a compact short name
+    short_name = make_short_name(default_generics, generic_aliases)
+    named_config(tb, default_generics, pre_config=cosim, short_name=short_name)
 
 ########################################################################################################################
 # Setup
