@@ -27,7 +27,7 @@ def add_configs(lib):
     # fix_dsp_mac 
     ############################################################################
     tb = lib.test_bench('fix_dsp_mac_vunit_tb')
-    cosim = fix_dsp_mac.vunit_tb.cosim.cosim
+    cosim = fix_dsp_mac.vunit_tb.fix_dsp_mac.cosim
 
     generics = {
         'FMT_MULT_A_G' : '(0,4,4)',
@@ -57,7 +57,7 @@ def add_configs(lib):
     # fix_dot_product
     ############################################################################
     tb = lib.test_bench('fix_dot_product_vunit_tb')
-    cosim = fix_dot_product.vunit_tb.cosim.cosim
+    cosim = fix_dot_product.vunit_tb.fix_dot_product.cosim
 
     generics = {
         'DIMENSION_WIDTH_G' : 4,
@@ -87,7 +87,7 @@ def add_configs(lib):
     # fix_matrix_vector_product
     ############################################################################
     tb = lib.test_bench('fix_matrix_vector_product_vunit_tb')
-    cosim = fix_matrix_vector_product.vunit_tb.cosim.cosim
+    cosim = fix_matrix_vector_product.vunit_tb.fix_matrix_vector_product.cosim
 
     ## Need to shorten generics, because of file name limit
     generic_aliases = {

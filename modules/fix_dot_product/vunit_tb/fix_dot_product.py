@@ -1,10 +1,10 @@
-# ---------------------------------------------------------------------------------------------------
-# cosim
-# ---------------------------------------------------------------------------------------------------
+################################################################################
+# fix_dot_product.py
+################################################################################
 
-# ---------------------------------------------------------------------------------------------------
+################################################################################
 # Imports
-# ---------------------------------------------------------------------------------------------------
+################################################################################
 # Import python packages
 import sys
 import os
@@ -16,6 +16,9 @@ from olo_fix import olo_fix_cosim, olo_fix_utils, olo_fix_plots
 from olo_fix import olo_fix_mult, olo_fix_add
 from en_cl_fix_pkg import *
 
+################################################################################
+# Functions
+################################################################################
 def cosim(output_path : str = None, 
           generics : dict = None, 
           cosim_mode : bool = True):
@@ -26,19 +29,11 @@ def cosim(output_path : str = None,
     FMT_IN_ELEMENT_A_G = olo_fix_utils.fix_format_from_string(generics["FMT_IN_ELEMENT_A_G"])
     FMT_IN_ELEMENT_B_G = olo_fix_utils.fix_format_from_string(generics["FMT_IN_ELEMENT_B_G"])
     FMT_OUT_RESULT_G = olo_fix_utils.fix_format_from_string(generics["FMT_OUT_RESULT_G"])
-
-    print(f"DIMENSION_WIDTH_G:  {DIMENSION_WIDTH_G}");
-    print(f"FMT_IN_ELEMENT_A_G: {FMT_IN_ELEMENT_A_G}");
-    print(f"FMT_IN_ELEMENT_B_G: {FMT_IN_ELEMENT_B_G}");
-    print(f"FMT_OUT_RESULT_G:   {FMT_OUT_RESULT_G}");
     
-
     Round = FixRound.Trunc_s
     Saturate = FixSaturate.Warn_s
 
     np.random.seed(42)  # Set the seed for reproducibility
-
-
     # Generate N vectors
     NUM_RANDOM_A = 3
     #in_vector_a_i = np.array()
@@ -61,10 +56,6 @@ def cosim(output_path : str = None,
     vector_b_seed = np.stack(vector_b_seed)
     vector_b_seed = cl_fix_from_real(vector_b_seed, FMT_IN_ELEMENT_B_G)
 
-    #print()
-    #print(f"vector_a_seed\n {vector_a_seed}\n")
-    #print(f"vector_b_seed\n {vector_b_seed}\n")
-
     vector_a = []
     vector_b = []
     n_a = len(vector_a_seed)
@@ -77,11 +68,6 @@ def cosim(output_path : str = None,
     vector_a = np.stack(vector_a)
     vector_b = np.stack(vector_b)
 
-    #print()
-    #print(f"vector_a\n {vector_a}\n")
-    #print(f"vector_b\n {vector_b}\n")
-
-
     #Calculation
 
     MultClass = olo_fix_mult(FMT_IN_ELEMENT_A_G, FMT_IN_ELEMENT_B_G, FMT_OUT_RESULT_G, Round, Saturate)
@@ -93,14 +79,7 @@ def cosim(output_path : str = None,
     
     mult_result = np.stack(mult_result)
 
-    #print(f"mult_result: {mult_result}")
-
-    # for i in range(len(vector_a)):
-    #     mult_result = MultClass.process(vector_a[i], vector_b[i])
-    #     print(f"mult_result: {mult_result}")
-
     AddClass = olo_fix_add(FMT_OUT_RESULT_G, FMT_OUT_RESULT_G, FMT_OUT_RESULT_G, Round, Saturate)
-
 
     from functools import reduce
 
@@ -110,19 +89,8 @@ def cosim(output_path : str = None,
 
     result = np.stack(result)
 
-    #print(f"result: {result}")
-
-    #raise NotImplementedError("Work in Progress")
-
-
-#    # Plot if enabled
-#    if not cosim_mode:
-#        py_out = in_mult_a_i * in_mult_b_i + in_add_i
-#        olo_fix_plots.plot_subplots({
-#                                    "Multiplication Stage" : {"in_mult_a_i" : in_mult_a_i, "in_mult_b_i" : in_mult_b_i},
-#                                    "Addition Stage" : {"mult_result" : mult_result, "in_add_i" : in_add_i},
-#                                    "Python vs. Fix" : {"Fix" : out_result_o, "Python" : py_out}
-#        })
+    if not cosim_mode:
+        pass
 
     #Write Files
     if cosim_mode:
@@ -132,6 +100,9 @@ def cosim(output_path : str = None,
         writer.write_cosim_file(result, FMT_OUT_RESULT_G, "result.fix")
     return True
 
+################################################################################
+# Main
+################################################################################
 if __name__ == "__main__":
     # Example usage
     generics = {
@@ -141,7 +112,6 @@ if __name__ == "__main__":
         "FMT_OUT_RESULT_G":   "(0, 10, 8)"
     }
     try:
-        #cosim(generics=generics, cosim_mode=False)
-        cosim(generics=generics, cosim_mode=True, output_path = '.')
+        cosim(generics=generics, cosim_mode=False)
     except NotImplementedError as e:
         print(f"Caught: {e}")

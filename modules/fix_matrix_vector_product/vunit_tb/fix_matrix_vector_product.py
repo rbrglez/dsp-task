@@ -1,10 +1,10 @@
-# ---------------------------------------------------------------------------------------------------
-# cosim
-# ---------------------------------------------------------------------------------------------------
+################################################################################
+# fix_matrix_vector_product.py
+################################################################################
 
-# ---------------------------------------------------------------------------------------------------
+################################################################################
 # Imports
-# ---------------------------------------------------------------------------------------------------
+################################################################################
 # Import python packages
 import sys
 import os
@@ -16,6 +16,9 @@ from olo_fix import olo_fix_cosim, olo_fix_utils, olo_fix_plots
 from olo_fix import olo_fix_mult, olo_fix_add
 from en_cl_fix_pkg import *
 
+################################################################################
+# Classes
+################################################################################
 class FixDotProduct:
     """
     Fixed Point Dot Product
@@ -119,6 +122,9 @@ class MatrixVectorProduct:
     
         return result
 
+################################################################################
+# Functions
+################################################################################
 def cosim(output_path : str = None, 
           generics : dict = None, 
           cosim_mode : bool = True):
@@ -194,6 +200,9 @@ def cosim(output_path : str = None,
         writer.write_cosim_file(result, FMT_OUT_RESULT_G, "result.fix", dim=MATRIX_ROW_WIDTH_G)
     return True
 
+################################################################################
+# Main
+################################################################################
 if __name__ == "__main__":
     # Example usage
     generics = {
@@ -206,7 +215,6 @@ if __name__ == "__main__":
         "FMT_OUT_RESULT_G"          : "(0, 10, 2)"
     }
     try:
-        #cosim(generics=generics, cosim_mode=False)
-        cosim(generics=generics, cosim_mode=True, output_path = '.')
+        cosim(generics=generics, cosim_mode=False)
     except NotImplementedError as e:
         print(f"Caught: {e}")
