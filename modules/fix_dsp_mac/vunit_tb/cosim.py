@@ -28,12 +28,6 @@ def cosim(output_path : str = None,
 
     FMT_MULT_RESULT = cl_fix_mult_fmt(FMT_MULT_A_G, FMT_MULT_B_G)
 
-    print(f"FMT_MULT_A_G:    {FMT_MULT_A_G}");
-    print(f"FMT_MULT_B_G:    {FMT_MULT_B_G}");
-    print(f"FMT_ADD_G:       {FMT_ADD_G}");
-    print(f"FMT_RESULT_G:    {FMT_RESULT_G}");
-    print(f"FMT_MULT_RESULT: {FMT_MULT_RESULT}");
-    
     Round = FixRound.Trunc_s
     Saturate = FixSaturate.Warn_s
 
@@ -54,9 +48,9 @@ def cosim(output_path : str = None,
     in_mult_b_i = cl_fix_from_real(in_mult_b_i, FMT_MULT_B_G)
 
     in_add_i = np.concatenate([
-        np.linspace(cl_fix_min_value(FMT_MULT_RESULT), cl_fix_max_value(FMT_ADD_G), 50, endpoint=False),
-        np.linspace(cl_fix_max_value(FMT_ADD_G), cl_fix_min_value(FMT_MULT_RESULT), 50),
-        np.random.uniform(low=cl_fix_min_value(FMT_ADD_G), high=cl_fix_max_value(FMT_MULT_RESULT), size = 100)
+        np.linspace(cl_fix_min_value(FMT_ADD_G), cl_fix_max_value(FMT_ADD_G), 50, endpoint=False),
+        np.linspace(cl_fix_max_value(FMT_ADD_G), cl_fix_min_value(FMT_ADD_G), 50),
+        np.random.uniform(low=cl_fix_min_value(FMT_ADD_G), high=cl_fix_max_value(FMT_ADD_G), size = 100)
     ])
 
     in_add_i = cl_fix_from_real(in_add_i, FMT_ADD_G)
