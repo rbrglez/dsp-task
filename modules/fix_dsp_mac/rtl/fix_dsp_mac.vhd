@@ -46,8 +46,13 @@ end entity fix_dsp_mac;
 
 architecture rtl of fix_dsp_mac is
 
+    constant FIX_FMT_MULT_A_C : FixFormat_t := cl_fix_format_from_string(FMT_MULT_A_G);
+    constant FIX_FMT_MULT_B_C : FixFormat_t := cl_fix_format_from_string(FMT_MULT_B_G);
+
+    constant FMT_MULT_RESULT_C : string := to_string(cl_fix_mult_fmt(FIX_FMT_MULT_A_C, FIX_FMT_MULT_B_C));
+
     signal mult_valid  : std_logic;
-    signal mult_result : std_logic_vector(fixFmtWidthFromString(FMT_ADD_G) - 1 downto 0);
+    signal mult_result : std_logic_vector(fixFmtWidthFromString(FMT_MULT_RESULT_C) - 1 downto 0);
 
 begin
 
@@ -55,7 +60,7 @@ begin
         generic map (
             AFmt_g      => FMT_MULT_A_G,
             BFmt_g      => FMT_MULT_B_G,
-            ResultFmt_g => FMT_ADD_G,
+            ResultFmt_g => FMT_MULT_RESULT_C,
             Round_g     => "Trunc_s",
             Saturate_g  => "Warn_s",
             OpRegs_g    => 0,
@@ -76,7 +81,7 @@ begin
 
     u_olo_fix_add : entity olo.olo_fix_add
         generic map (
-            AFmt_g      => FMT_ADD_G,
+            AFmt_g      => FMT_MULT_RESULT_C,
             BFmt_g      => FMT_ADD_G,
             ResultFmt_g => FMT_RESULT_G,
             Round_g     => "Trunc_s",

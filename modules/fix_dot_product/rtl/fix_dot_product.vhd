@@ -55,7 +55,7 @@ architecture rtl of fix_dot_product is
 
     type two_process_r is record
         vector_a         : StlvArray_t(DIMENSION_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_IN_ELEMENT_A_G) - 1 downto 0);
-        vector_b         : StlvArray_t(DIMENSION_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_IN_ELEMENT_A_G) - 1 downto 0);
+        vector_b         : StlvArray_t(DIMENSION_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_IN_ELEMENT_B_G) - 1 downto 0);
         factor_a         : std_logic_vector(fixFmtWidthFromString(FMT_IN_ELEMENT_A_G) - 1 downto 0);
         factor_b         : std_logic_vector(fixFmtWidthFromString(FMT_IN_ELEMENT_B_G) - 1 downto 0);
         in_ready         : std_logic;
