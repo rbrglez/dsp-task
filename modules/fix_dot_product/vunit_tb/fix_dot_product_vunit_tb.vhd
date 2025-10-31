@@ -108,13 +108,13 @@ begin
                 fix_checker_check_file (net, CHECKER_RESULT_C, RESULT_FILE_C);
             end if;
 
---            -- *** Second run with delay ***
---            if run("Throttled") then
---                fix_stimuli_play_file (net, STIMULI_VECTOR_A_C, VECTOR_A_FILE_C, stall_probability => 0.5, stall_max_cycles => 10);
---                fix_stimuli_play_file (net, STIMULI_VECTOR_B_C, VECTOR_B_FILE_C);
---
---                fix_checker_check_file (net, CHECKER_RESULT_C, RESULT_FILE_C);
---            end if;
+            -- *** Second run with delay ***
+            if run("Throttled") then
+                fix_stimuli_play_file (net, STIMULI_VECTOR_A_C, VECTOR_A_FILE_C, stall_probability => 0.5, stall_max_cycles => 10);
+                fix_stimuli_play_file (net, STIMULI_VECTOR_B_C, VECTOR_B_FILE_C);
+
+                fix_checker_check_file (net, CHECKER_RESULT_C, RESULT_FILE_C);
+            end if;
 
             -- *** Wait until done ***
             wait_until_idle(net, as_sync(STIMULI_VECTOR_A_C));
@@ -175,7 +175,8 @@ begin
         generic map (
             Instance => STIMULI_VECTOR_B_C,
             Dim      => DIMENSION_WIDTH_G,
-            Fmt      => cl_fix_format_from_string(FMT_IN_ELEMENT_B_G)
+            Fmt      => cl_fix_format_from_string(FMT_IN_ELEMENT_B_G),
+            Is_Timing_Master => false
         )
         port map (
             Clk => clk_i,
