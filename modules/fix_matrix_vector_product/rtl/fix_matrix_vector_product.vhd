@@ -55,41 +55,47 @@ end entity fix_matrix_vector_product;
 
 architecture rtl of fix_matrix_vector_product is
 
+    ----------------------------------------------------------------------------
+    -- Constants
+    ----------------------------------------------------------------------------
+    -- Number of fix_dot_product stages needed to compute the final out_result.
     constant NUM_STAGES_C : positive := integer(ceil(real(MATRIX_ROW_WIDTH_G) / real(NUM_DOT_PRODUCTS_G)));
 
+    ----------------------------------------------------------------------------
+    -- Types
+    ----------------------------------------------------------------------------
     type state_t is (
             IDLE_S,
             FEED_DOT_PRODUCT_S,
-            COLLECT_DOT_PRODUCT_S,
-            ERROR_S
+            COLLECT_DOT_PRODUCT_S
         );
 
     type two_process_r is record
+        in_ready        : std_logic;
+        out_valid       : std_logic;
+        out_error       : std_logic;
+        out_result      : StlvArray_t(MATRIX_ROW_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_OUT_RESULT_G) - 1 downto 0);
+        in_dot_valid    : std_logic;
         matrix_extended : StlvVectorArray_t(NUM_DOT_PRODUCTS_G*NUM_STAGES_C - 1 downto 0)(MATRIX_COLUMN_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_IN_MATRIX_ELEMENT_G) - 1 downto 0);
         vector          : StlvArray_t(MATRIX_COLUMN_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_IN_VECTOR_ELEMENT_G) - 1 downto 0);
-
-        result : StlvArray_t(MATRIX_ROW_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_OUT_RESULT_G) - 1 downto 0);
-
-        stage_idx : natural range 0 to NUM_STAGES_C;
-
-        in_dot_valid : std_logic;
-
-        in_ready  : std_logic;
-        out_valid : std_logic;
-
-        out_error : std_logic;
-
+        stage_idx       : natural range 0 to NUM_STAGES_C;
         --
         state : state_t;
     end record;
 
+    ----------------------------------------------------------------------------
+    -- Two Process records
+    ----------------------------------------------------------------------------
     signal r      : two_process_r;
     signal r_next : two_process_r;
 
+    ----------------------------------------------------------------------------
+    -- Fix Dot Product signals
+    ----------------------------------------------------------------------------
+    signal in_dot_ready : std_logic_vector(NUM_DOT_PRODUCTS_G - 1 downto 0);
+
     signal out_dot_valid  : std_logic_vector(NUM_DOT_PRODUCTS_G - 1 downto 0);
     signal out_dot_result : StlvArray_t(NUM_DOT_PRODUCTS_G - 1 downto 0)(fixFmtWidthFromString(FMT_OUT_RESULT_G) - 1 downto 0);
-
-    signal in_dot_ready : std_logic_vector(NUM_DOT_PRODUCTS_G - 1 downto 0);
 
 begin
 
@@ -97,8 +103,6 @@ begin
     -- Dot Product
     ----------------------------------------------------------------------------
     GEN_DOT_PRODUCT : for i in 0 to NUM_DOT_PRODUCTS_G - 1 generate
-
-
         u_fix_dot_product : entity work.fix_dot_product
             generic map (
                 DIMENSION_WIDTH_G => MATRIX_COLUMN_WIDTH_G,
@@ -128,11 +132,16 @@ begin
         variable v : two_process_r;
     begin
 
+        -- Hold variables stable
         v := r;
 
+        -- Single clock cycle pulse
         v.out_valid := '0';
         v.out_error := '0';
 
+        ------------------------------------------------------------------------
+        -- FSM
+        ------------------------------------------------------------------------
         case (r.state) is
             --------------------------------------------------------------------
             when IDLE_S =>
@@ -147,64 +156,72 @@ begin
                     v.vector                                           := in_vector_i;
 
                     v.in_dot_valid := '1';
-
-                    v.state := FEED_DOT_PRODUCT_S;
+                    v.state        := FEED_DOT_PRODUCT_S;
                 end if;
 
             --------------------------------------------------------------------
             when FEED_DOT_PRODUCT_S =>
-
                 v.in_dot_valid := '1';
+                -- Check if in_dot_valid is set and at least one of the
+                -- NUM_DOT_PRODUCTS_G fix_dot_product units is ready.
                 if (r.in_dot_valid = '1' and in_dot_ready /= (in_dot_ready'range => '0')) then
                     v.in_dot_valid := '0';
 
                     if (in_dot_ready /= (in_dot_ready'range => '1')) then
-                        -- ERROR !!!
-                        -- all of dot_product in_ready inputs weren't set at the same time!
-                        v.state := ERROR_S;
+                        -- ERROR: 
+                        -- All fix_dot_product units must be ready when in_dot_valid is set.
+                        v.out_error := '1';
+                        v.state     := IDLE_S;
                     else
+                        -- Wait for fix_dot_product units to finish computing the dot products.
                         v.state := COLLECT_DOT_PRODUCT_S;
-
                     end if;
-
                 end if;
 
             --------------------------------------------------------------------
             when COLLECT_DOT_PRODUCT_S =>
 
+                -- Check if at least one of the NUM_DOT_PRODUCTS_G
+                -- fix_dot_product units has out_dot_valid set.
                 if (out_dot_valid /= (out_dot_valid'range => '0')) then
 
+                    -- In this stage, populate up to NUM_DOT_PRODUCTS_G elements
+                    -- of the result vector with computed dot_product results.
                     for i in 0 to NUM_DOT_PRODUCTS_G - 1 loop
                         if (i + r.stage_idx * NUM_DOT_PRODUCTS_G < MATRIX_ROW_WIDTH_G) then
-                            v.result(i + r.stage_idx * NUM_DOT_PRODUCTS_G) := out_dot_result(i);
+                            v.out_result(i + r.stage_idx * NUM_DOT_PRODUCTS_G) := out_dot_result(i);
                         end if;
                     end loop;
 
                     if (out_dot_valid /= (out_dot_valid'range => '1')) then
-                        -- ERROR
-                        v.state := ERROR_S;
+                        -- ERROR: 
+                        -- All fix_dot_product units must set out_dot_valid simultaneously.
+                        v.out_error := '1';
+                        v.state     := IDLE_S;
+
                     elsif (r.stage_idx < NUM_STAGES_C - 1) then
-                        v.stage_idx := r.stage_idx + 1;
-                        v.state     := FEED_DOT_PRODUCT_S;
+                        -- Start a new stage of dot_product calculation
+                        v.stage_idx    := r.stage_idx + 1;
+                        v.in_dot_valid := '1';
+                        v.state        := FEED_DOT_PRODUCT_S;
+
                     else
+                        -- All stages (NUM_STAGES_C) of the dot_product calculation are done. 
+                        -- out_result vector contains the complete result.
                         v.out_valid := '1';
                         v.in_ready  := '1';
-
                         v.stage_idx := 0;
-
-                        v.state := IDLE_S;
+                        v.state     := IDLE_S;
                     end if;
                 end if;
-
-
-            --------------------------------------------------------------------
-            when ERROR_S =>
-                v.out_error := '1';
 
             --------------------------------------------------------------------
             when others =>
                 null;
+        ------------------------------------------------------------------------
         end case;
+
+        -- Apply to record
         r_next <= v;
 
     end process;
@@ -212,12 +229,12 @@ begin
     ----------------------------------------------------------------------------
     -- Output
     ----------------------------------------------------------------------------
-    out_result_o <= r.result;
-    out_error_o  <= r.out_error;
-
-    out_valid_o <= r.out_valid;
-
+    -- In Interface
     in_ready_o <= r.in_ready;
+    -- Out Interface
+    out_valid_o  <= r.out_valid;
+    out_error_o  <= r.out_error;
+    out_result_o <= r.out_result;
 
     ----------------------------------------------------------------------------
     -- Sequential Process
@@ -227,16 +244,13 @@ begin
         if rising_edge(clk_i) then
             r <= r_next;
             if (rst_i = '1') then
-
+                r.in_ready        <= '1';
+                r.out_valid       <= '0';
+                r.out_error       <= '0';
+                r.in_dot_valid    <= '0';
                 r.stage_idx       <= 0;
                 r.matrix_extended <= (others => (others => (others => 'X')));
-                r.in_ready        <= '1';
-
-                r.out_valid <= '0';
-
-                r.out_error <= '0';
-
-                r.state <= IDLE_S;
+                r.state           <= IDLE_S;
             end if;
         end if;
     end process;
