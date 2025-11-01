@@ -47,6 +47,9 @@ end entity fix_dot_product;
 
 architecture rtl of fix_dot_product is
 
+    ----------------------------------------------------------------------------
+    -- Types
+    ----------------------------------------------------------------------------
     type state_t is (
             IDLE_S,
             CALCULATE_S,
@@ -64,16 +67,22 @@ architecture rtl of fix_dot_product is
         state : state_t;
     end record;
 
+    ----------------------------------------------------------------------------
+    -- Two Process records
+    ----------------------------------------------------------------------------
     signal r      : two_process_r;
     signal r_next : two_process_r;
 
-    signal accumulator : std_logic_vector(fixFmtWidthFromString(FMT_OUT_RESULT_G) - 1 downto 0);
-    signal result      : std_logic_vector(fixFmtWidthFromString(FMT_OUT_RESULT_G) - 1 downto 0);
+    ----------------------------------------------------------------------------
+    -- MAC (Multiply and ACcumulate) signals
+    ----------------------------------------------------------------------------
+    signal mac_accumulator : std_logic_vector(fixFmtWidthFromString(FMT_OUT_RESULT_G) - 1 downto 0);
+    signal mac_result      : std_logic_vector(fixFmtWidthFromString(FMT_OUT_RESULT_G) - 1 downto 0);
 
 begin
 
     ----------------------------------------------------------------------------
-    -- Multiply and ACcumulate
+    -- MAC (Multiply and ACcumulate)
     ----------------------------------------------------------------------------
     u_fix_dsp_mac : entity work.fix_dsp_mac
         generic map (
@@ -89,17 +98,17 @@ begin
             in_valid_i  => '1',
             in_mult_a_i => r.vector_a(r.idx),
             in_mult_b_i => r.vector_b(r.idx),
-            in_add_i    => accumulator,
+            in_add_i    => mac_accumulator,
 
             out_valid_o  => open,
-            out_result_o => result
+            out_result_o => mac_result
         );
 
     ----------------------------------------------------------------------------
     -- Feedback MUX
     ----------------------------------------------------------------------------
-    accumulator  <= result when r.feedback_mux_sel = '1' else (others => '0');
-    out_result_o <= result;
+    mac_accumulator <= mac_result when r.feedback_mux_sel = '1' else (others => '0');
+    out_result_o    <= mac_result;
 
     ----------------------------------------------------------------------------
     -- Combinatorial process
@@ -108,11 +117,15 @@ begin
         variable v : two_process_r;
     begin
 
+        -- Hold variables stable
         v := r;
 
         -- Single clock cycle pulse
         v.out_valid := '0';
 
+        ------------------------------------------------------------------------
+        -- FSM
+        ------------------------------------------------------------------------
         case (r.state) is
             --------------------------------------------------------------------
             when IDLE_S =>
@@ -127,19 +140,16 @@ begin
                     v.vector_a := in_vector_a_i;
                     v.vector_b := in_vector_b_i;
 
-                    v.idx := r.idx + 1;
-
+                    v.idx   := r.idx + 1;
                     v.state := CALCULATE_S;
                 end if;
 
             --------------------------------------------------------------------
             when CALCULATE_S =>
-
                 v.feedback_mux_sel := '1';
+                v.idx              := r.idx + 1;
 
-                v.idx := r.idx + 1;
-
-                if (r.idx > DIMENSION_WIDTH_G - 2) then
+                if (r.idx = DIMENSION_WIDTH_G - 1) then
                     v.idx   := 0;
                     v.state := FINISHED_S;
                 end if;
@@ -155,8 +165,10 @@ begin
             --------------------------------------------------------------------
             when others =>
                 null;
+        ------------------------------------------------------------------------
         end case;
 
+        -- Apply to record
         r_next <= v;
 
     end process;
@@ -164,8 +176,10 @@ begin
     ----------------------------------------------------------------------------
     -- Output
     ----------------------------------------------------------------------------
+    -- In Interface
+    in_ready_o <= r.in_ready;
+    -- Out Interface
     out_valid_o <= r.out_valid;
-    in_ready_o  <= r.in_ready;
 
     ----------------------------------------------------------------------------
     -- Sequential Process
@@ -175,9 +189,9 @@ begin
         if rising_edge(clk_i) then
             r <= r_next;
             if (rst_i = '1') then
-                r.feedback_mux_sel <= '0';
                 r.in_ready         <= '1';
                 r.out_valid        <= '0';
+                r.feedback_mux_sel <= '0';
                 r.idx              <= 0;
                 r.state            <= IDLE_S;
             end if;
