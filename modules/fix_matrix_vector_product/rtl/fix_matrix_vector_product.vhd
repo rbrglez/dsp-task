@@ -91,14 +91,7 @@ architecture rtl of fix_matrix_vector_product is
 
     signal in_dot_ready : std_logic_vector(NUM_DOT_PRODUCTS_G - 1 downto 0);
 
-    signal matrix_muxed : StlvVectorArray_t(NUM_DOT_PRODUCTS_G - 1 downto 0)(MATRIX_COLUMN_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_IN_MATRIX_ELEMENT_G) - 1 downto 0);
-
 begin
-
-    -- GHDL requires static names in port maps. 
-    -- Since r.matrix_extended(...) is dynamic, 
-    -- we use the intermediate signal matrix_muxed instead.
-    matrix_muxed <= r.matrix_extended((r.stage_idx + 1) * NUM_DOT_PRODUCTS_G - 1 downto r.stage_idx * NUM_DOT_PRODUCTS_G);
 
     ----------------------------------------------------------------------------
     -- Dot Product
@@ -120,7 +113,7 @@ begin
 
                 in_valid_i    => r.in_dot_valid,
                 in_ready_o    => in_dot_ready(i),
-                in_vector_a_i => matrix_muxed(i),
+                in_vector_a_i => r.matrix_extended(i + r.stage_idx * NUM_DOT_PRODUCTS_G),
                 in_vector_b_i => r.vector,
 
                 out_valid_o  => out_dot_valid(i),
