@@ -56,8 +56,6 @@ architecture rtl of fix_dot_product is
     type two_process_r is record
         vector_a         : StlvArray_t(DIMENSION_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_IN_ELEMENT_A_G) - 1 downto 0);
         vector_b         : StlvArray_t(DIMENSION_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_IN_ELEMENT_B_G) - 1 downto 0);
-        factor_a         : std_logic_vector(fixFmtWidthFromString(FMT_IN_ELEMENT_A_G) - 1 downto 0);
-        factor_b         : std_logic_vector(fixFmtWidthFromString(FMT_IN_ELEMENT_B_G) - 1 downto 0);
         in_ready         : std_logic;
         out_valid        : std_logic;
         feedback_mux_sel : std_logic;
@@ -89,8 +87,8 @@ begin
             rst_i => rst_i,
 
             in_valid_i  => '1',
-            in_mult_a_i => r.factor_a,
-            in_mult_b_i => r.factor_b,
+            in_mult_a_i => r.vector_a(r.idx),
+            in_mult_b_i => r.vector_b(r.idx),
             in_add_i    => accumulator,
 
             out_valid_o  => open,
@@ -129,10 +127,6 @@ begin
                     v.vector_a := in_vector_a_i;
                     v.vector_b := in_vector_b_i;
 
-                    -- Extract the first factors from register
-                    v.factor_a := in_vector_a_i(r.idx);
-                    v.factor_b := in_vector_b_i(r.idx);
-
                     v.idx := r.idx + 1;
 
                     v.state := CALCULATE_S;
@@ -142,9 +136,6 @@ begin
             when CALCULATE_S =>
 
                 v.feedback_mux_sel := '1';
-
-                v.factor_a := r.vector_a(r.idx);
-                v.factor_b := r.vector_b(r.idx);
 
                 v.idx := r.idx + 1;
 
