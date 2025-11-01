@@ -25,6 +25,30 @@ filesets:
     file_type: "xdc"
 
 ################################################################################
+# Parameters
+################################################################################
+parameters:
+  FMT_MULT_A_G:
+    datatype    : str
+    description : fixed point format of in_mult_a
+    paramtype   : generic
+
+  FMT_MULT_B_G:
+    datatype    : str
+    description : fixed point format of in_mult_b
+    paramtype   : generic
+
+  FMT_ADD_G:
+    datatype    : str
+    description : fixed point format of in_add
+    paramtype   : generic
+  
+  FMT_RESULT_G:
+    datatype    : str
+    description : fixed point format of out_result
+    paramtype   : generic
+
+################################################################################
 # Targets
 ################################################################################
 targets:
@@ -35,6 +59,11 @@ targets:
 
   project:
     <<: *default
+    parameters:
+      - "FMT_MULT_A_G"
+      - "FMT_MULT_B_G"
+      - "FMT_ADD_G"
+      - "FMT_RESULT_G"
     toplevel:
       - "evaluate_fix_dsp_mac"
     default_tool: "vivado"
