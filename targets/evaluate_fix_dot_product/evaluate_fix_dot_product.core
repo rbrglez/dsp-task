@@ -1,0 +1,74 @@
+CAPI=2:
+
+################################################################################
+# Header
+################################################################################
+name: "rbrglez:dsp-task:evaluate-fix-dot-product:0.1.0"
+description: "Evaluate Fixed Point Dot Product"
+
+################################################################################
+# Filesets
+################################################################################
+filesets:
+  rtl_files:
+    depend:
+      - "^open-logic:open-logic-dev:base:4.0.0"
+      - "^rbrglez:dsp-task:reduce:0.1.0"
+      - "^rbrglez:dsp-task:fix-dot-product:0.1.0"
+    files:
+      - "rtl/evaluate_fix_dot_product.vhd"
+    file_type: "vhdlSource-2008"
+
+  constraint_files:
+    files:
+      - "constraints/a7_35.xdc"
+    file_type: "xdc"
+
+################################################################################
+# Parameters
+################################################################################
+parameters:
+  DIMENSION_WIDTH_G:
+    datatype    : int
+    description : Dimension of in_vector_a and in_vector_b
+    paramtype   : generic
+
+  FMT_IN_ELEMENT_A_G:
+    datatype    : str
+    description : fixed point format of in_vector_a elements
+    paramtype   : generic
+
+  FMT_IN_ELEMENT_B_G:
+    datatype    : str
+    description : fixed point format of in_vector_b elements
+    paramtype   : generic
+  
+  FMT_OUT_RESULT_G:
+    datatype    : str
+    description : fixed point format of out_result
+    paramtype   : generic
+
+################################################################################
+# Targets
+################################################################################
+targets:
+  default: &default
+    filesets:
+      - "rtl_files"
+      - "constraint_files"
+
+  project:
+    <<: *default
+    parameters:
+      - "DIMENSION_WIDTH_G"
+      - "FMT_IN_ELEMENT_A_G"
+      - "FMT_IN_ELEMENT_B_G"
+      - "FMT_OUT_RESULT_G"
+    toplevel:
+      - "evaluate_fix_dot_product"
+    default_tool: "vivado"
+    tools:
+      vivado:
+        source_mgmt_mode: "All"
+        part: "xc7a35ticsg324-1L"
+        jobs: 16

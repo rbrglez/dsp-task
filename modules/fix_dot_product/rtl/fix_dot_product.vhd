@@ -32,7 +32,7 @@ entity fix_dot_product is
         ------------------------------------------------------------------------
         -- In Interface
         ------------------------------------------------------------------------
-        in_valid_i    : in  std_logic;
+        in_valid_i    : in  std_logic := '1';
         in_ready_o    : out std_logic;
         in_vector_a_i : in  StlvArray_t(DIMENSION_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_IN_ELEMENT_A_G) - 1 downto 0);
         in_vector_b_i : in  StlvArray_t(DIMENSION_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_IN_ELEMENT_B_G) - 1 downto 0);
