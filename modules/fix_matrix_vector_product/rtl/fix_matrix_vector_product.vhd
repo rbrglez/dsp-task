@@ -39,7 +39,7 @@ entity fix_matrix_vector_product is
         ------------------------------------------------------------------------
         -- In Interface
         ------------------------------------------------------------------------
-        in_valid_i  : in  std_logic;
+        in_valid_i  : in  std_logic := '1';
         in_ready_o  : out std_logic;
         in_matrix_i : in  StlvVectorArray_t(MATRIX_ROW_WIDTH_G - 1 downto 0)(MATRIX_COLUMN_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_IN_MATRIX_ELEMENT_G) - 1 downto 0);
         in_vector_i : in  StlvArray_t(MATRIX_COLUMN_WIDTH_G - 1 downto 0)(fixFmtWidthFromString(FMT_IN_VECTOR_ELEMENT_G) - 1 downto 0);

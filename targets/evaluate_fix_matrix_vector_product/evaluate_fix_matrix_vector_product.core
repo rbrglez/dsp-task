@@ -1,0 +1,87 @@
+CAPI=2:
+
+################################################################################
+# Header
+################################################################################
+name: "rbrglez:dsp-task:evaluate-fix-matrix-vector-product:0.1.0"
+description: "Evaluate Fixed Point Matrix Vector Product"
+
+################################################################################
+# Filesets
+################################################################################
+filesets:
+  rtl_files:
+    depend:
+      - "^open-logic:open-logic-dev:base:4.0.0"
+      - "^rbrglez:dsp-task:reduce:0.1.0"
+      - "^rbrglez:dsp-task:support-matrix-generator-pkg:0.1.0"
+      - "^rbrglez:dsp-task:fix-matrix-vector-product:0.1.0"
+    files:
+      - "rtl/evaluate_fix_matrix_vector_product.vhd"
+    file_type: "vhdlSource-2008"
+
+  constraint_files:
+    files:
+      - "constraints/a7_35.xdc"
+    file_type: "xdc"
+
+################################################################################
+# Parameters
+################################################################################
+parameters:
+  NUM_DOT_PRODUCTS_G:
+    datatype    : int
+    description : Number of Dot Products Avialible for computation
+    paramtype   : generic
+
+  MATRIX_ROW_WIDTH_G:
+    datatype    : int
+    description : Number of rows in in_matrix and dimension of in_vector
+    paramtype   : generic
+
+  MATRIX_COLUMN_WIDTH_G:
+    datatype    : int
+    description : Number of columns in in_matrix and dimension of out_result
+    paramtype   : generic
+
+  FMT_IN_MATRIX_ELEMENT_G:
+    datatype    : str
+    description : fixed point format of in_matrix elements
+    paramtype   : generic
+
+  FMT_IN_VECTOR_ELEMENT_G:
+    datatype    : str
+    description : fixed point format of in_vector elements
+    paramtype   : generic
+  
+  FMT_OUT_RESULT_G:
+    datatype    : str
+    description : fixed point format of out_result
+    paramtype   : generic
+
+################################################################################
+# Targets
+################################################################################
+targets:
+  default: &default
+    filesets:
+      - "rtl_files"
+      - "constraint_files"
+
+  project:
+    <<: *default
+    parameters:
+      - "NUM_DOT_PRODUCTS_G"
+      - "MATRIX_ROW_WIDTH_G"
+      - "MATRIX_COLUMN_WIDTH_G"
+      - "FMT_IN_MATRIX_ELEMENT_G"
+      - "FMT_IN_VECTOR_ELEMENT_G"
+      - "FMT_OUT_RESULT_G"
+    toplevel:
+      - "evaluate_fix_matrix_vector_product"
+    default_tool: "vivado"
+    tools:
+      vivado:
+        source_mgmt_mode: "All"
+        part: "xc7a35ticsg324-1L"
+        jobs: 16
