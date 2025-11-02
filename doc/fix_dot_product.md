@@ -2,7 +2,7 @@
 
 [Back to **Entity List**](./entity_list.md)
 
-VHDL Source: [fix_dsp_mac](../modules/fix_dot_product/rtl/fix_dot_product.vhd)
+VHDL Source: [fix_dot_product](../modules/fix_dot_product/rtl/fix_dot_product.vhd)
 
 ## Description
 
