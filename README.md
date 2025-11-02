@@ -1,6 +1,6 @@
 # DSP Task
 
-[**Entity List**](../doc/entity_list.md)
+[**Entity List**](./doc/entity_list.md)
 
 ##  Purpose
 
