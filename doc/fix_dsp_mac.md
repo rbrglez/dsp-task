@@ -9,10 +9,10 @@ VHDL Source: [fix_dsp_mac](../modules/fix_dsp_mac/rtl/fix_dsp_mac.vhd)
 This entity performs a fixed-point multiply-accumulate (MAC) operation. 
 It multiplies two fixed-point numbers and adds the result to an accumulated value.
 
-With the default values of the MULT_* and ADD_* generics, the module has a latency of 1 clock cycle
+With the default values of the **MULT_\*** and **ADD_\*** generics, the module has a latency of 1 clock cycle
 
 > **Warning:**
-> This module has been verified only with the default values of the *MULT\_\** and *ADD\_\** generics.
+> This module has been verified only with the default values of the **MULT_\*** and **ADD_\*** generics.
 > If you modify these generics, you must thoroughly test the design to ensure correct functionality and timing.
 
 For details about the fixed-point number format, refer to the
