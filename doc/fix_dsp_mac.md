@@ -16,7 +16,7 @@ With the default values of the MULT_* and ADD_* generics, the module has a laten
 > If you modify these generics, you must thoroughly test the design to ensure correct functionality and timing.
 
 For details about the fixed-point number format, refer to the
-[fixed point principles](../submodules/open-logic/doc/fix/olo_fix_principles.md).
+[fixed point principles](https://github.com/open-logic/open-logic/blob/main/doc/fix/olo_fix_principles.md).
 
 ![Waveform](./fix_dsp_mac/fix_dsp_mac_tb.png)
 
