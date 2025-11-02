@@ -18,8 +18,6 @@ With the default values of the **MULT_\*** and **ADD_\*** generics, the module h
 For details about the fixed-point number format, refer to the
 [fixed point principles](https://github.com/open-logic/open-logic/blob/main/doc/fix/olo_fix_principles.md).
 
-![Waveform](./fix_dsp_mac/fix_dsp_mac_tb.png)
-
 ## Generics
 
 ### Format
