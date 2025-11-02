@@ -23,14 +23,12 @@ use work.extend_pkg_array.all;
 --------------------------------------------------------------------------------
 entity fix_matrix_vector_product is
     generic (
-        NUM_DOT_PRODUCTS_G : positive := 11;
-
-        MATRIX_ROW_WIDTH_G    : natural := 32;
-        MATRIX_COLUMN_WIDTH_G : natural := 32;
-
-        FMT_IN_MATRIX_ELEMENT_G : string := "(0, 8, 8)";
-        FMT_IN_VECTOR_ELEMENT_G : string := "(0, 8, 8)";
-        FMT_OUT_RESULT_G        : string := "(0, 21, 16)"
+        NUM_DOT_PRODUCTS_G      : positive;
+        MATRIX_ROW_WIDTH_G      : natural;
+        MATRIX_COLUMN_WIDTH_G   : natural;
+        FMT_IN_MATRIX_ELEMENT_G : string;
+        FMT_IN_VECTOR_ELEMENT_G : string;
+        FMT_OUT_RESULT_G        : string
     );
     port (
         clk_i : in std_logic;

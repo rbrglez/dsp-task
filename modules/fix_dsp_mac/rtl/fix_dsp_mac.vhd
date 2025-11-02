@@ -19,10 +19,10 @@ use olo.olo_fix_pkg.all;
 --------------------------------------------------------------------------------
 entity fix_dsp_mac is
     generic(
-        FMT_MULT_A_G : string := "(0, 2, 2)";
-        FMT_MULT_B_G : string := "(0, 2, 2)";
-        FMT_ADD_G    : string := "(0, 4, 4)";
-        FMT_RESULT_G : string := "(0, 5, 4)";
+        FMT_MULT_A_G : string;
+        FMT_MULT_B_G : string;
+        FMT_ADD_G    : string;
+        FMT_RESULT_G : string;
 
         MULT_ROUND_G     : string  := FixRound_Trunc_c;
         MULT_SATURATE_G  : string  := FixSaturate_Warn_c;
@@ -73,7 +73,10 @@ architecture rtl of fix_dsp_mac is
     signal mult_result : std_logic_vector(fixFmtWidthFromString(FMT_MULT_RESULT_C) - 1 downto 0);
 
 begin
-
+    
+    ----------------------------------------------------------------------------
+    -- Multiplication Stage
+    ----------------------------------------------------------------------------
     u_olo_fix_mult : entity olo.olo_fix_mult
         generic map (
             AFmt_g      => FMT_MULT_A_G,
@@ -97,6 +100,9 @@ begin
             Out_Result => mult_result
         );
 
+    ----------------------------------------------------------------------------
+    -- Addition Stage
+    ----------------------------------------------------------------------------
     u_olo_fix_add : entity olo.olo_fix_add
         generic map (
             AFmt_g      => FMT_MULT_RESULT_C,

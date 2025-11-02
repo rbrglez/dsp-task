@@ -19,11 +19,11 @@ use olo.olo_fix_pkg.all;
 --------------------------------------------------------------------------------
 entity fix_dot_product is
     generic (
-        DIMENSION_WIDTH_G : natural := 32;
+        DIMENSION_WIDTH_G : natural;
 
-        FMT_IN_ELEMENT_A_G : string := "(0, 2, 2)";
-        FMT_IN_ELEMENT_B_G : string := "(0, 2, 2)";
-        FMT_OUT_RESULT_G   : string := "(0, 9, 4)"
+        FMT_IN_ELEMENT_A_G : string;
+        FMT_IN_ELEMENT_B_G : string;
+        FMT_OUT_RESULT_G   : string
     );
     port (
         clk_i : in std_logic;
