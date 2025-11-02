@@ -4,7 +4,8 @@
 
 ## fixed point mathematics modules
 
-| Entity                                  | Description                                                   |
-|:----------------------------------------|:--------------------------------------------------------------|
-| [fix_dsp_mac](./fix_dsp_mac.md)         | Performs fixed-point multiplication and accumulation (MAC).   |
-| [fix_dot_product](./fix_dot_product.md) | Computes the fixed-point dot product using a single MAC unit. |
+| Entity                                                      | Description                                                   |
+|:------------------------------------------------------------|:--------------------------------------------------------------|
+| [fix_dsp_mac](./fix_dsp_mac.md)                             | Performs fixed-point multiplication and accumulation (MAC).   |
+| [fix_dot_product](./fix_dot_product.md)                     | Computes the fixed-point dot product using a single MAC unit. |
+| [fix_matrix_vector_product](./fix_matrix_vector_product.md) | Computes the fixed-point matrix vector product                |
