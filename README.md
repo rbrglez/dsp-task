@@ -1,5 +1,7 @@
 # DSP Task
 
+[**Entity List**](../doc/entity_list.md)
+
 ##  Purpose
 
 The goal of this repository is to design and implement an efficient matrix–vector multiplication architecture in HDL that is fully synthesizable and can be deployed on an FPGA.
@@ -40,3 +42,4 @@ y_i = \sum_{j=0}^{\text{COL-1}} a_{ij} \cdot x_j
 $$
 
 we have COL multiplications. while we have Multiply and Accumulate module, we can multiply aij and xj each clock cycle and add the result of multiplication for previous clock cycle (accumulation)
+
